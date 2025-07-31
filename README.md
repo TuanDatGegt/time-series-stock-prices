@@ -1,0 +1,1 @@
+Dự đoán chuỗi thời gian này là một chỗi các điểm dữ liệu theo thứ tự thời gian được các doanh nghiệp sử dụng để phân tích dữ liệu trong quá khứ và đưa ra dự đoán trong tương lai. Các điểm dữ liệu này là một tập hợp các quan sát tại các thời điểm cụ thể và các khoảng thời gian bằng nhau, thường có chỉ số ngày giờ và giá trị tương ứng.
