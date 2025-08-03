@@ -1,173 +1,73 @@
 ## Time Series Forecasting
-Dự đoán chuỗi thời gian này là một chỗi các điểm dữ liệu theo thứ tự thời gian được các doanh nghiệp sử dụng để phân tích dữ liệu trong quá khứ và đưa ra dự đoán trong tương lai. Các điểm dữ liệu này là một tập hợp các quan sát tại các thời điểm cụ thể và các khoảng thời gian bằng nhau, thường có chỉ số ngày giờ và giá trị tương ứng.
 
+Dự đoán chuỗi thời gian là một chuỗi các điểm dữ liệu theo thứ tự thời gian được các doanh nghiệp sử dụng để phân tích dữ liệu trong quá khứ và đưa ra dự đoán trong tương lai. Các điểm dữ liệu này là một tập hợp các quan sát tại các thời điểm cụ thể và các khoảng thời gian bằng nhau, thường có chỉ số ngày giờ và giá trị tương ứng.
 
+---
 
 ## Dữ liệu chuỗi thời gian bao gồm bốn thành phần:
 
-- Thành phần xu hướng: Đây là biến động tăng hoặc giảm theo một mô hình có thể dự đoán được trong một khoảng thời gian dài.
-- Thành phần theo mùa: Là biến động đều đặn tuần hoàn và lặp lại trong một khoảng thời gian cụ thể như ngày, tuần, tháng, mùa,...
-- Thành phần theo chu kỳ: Là biến động tương ứng với các chu kỳ "boom-bust" của doanh nghiệp hoặc nền kinh tế, hoặc tuân theo các chu kỳ riêng biệt của chúng.
-- Thành phần ngẫu nhiên: Là biến động bất thường hoặc dư thừa và không thuộc bất kỳ phân loại nào trong ba phân loại trên.
+- **Thành phần xu hướng (Trend)**: Biến động tăng hoặc giảm theo một mô hình có thể dự đoán được trong một khoảng thời gian dài.
+- **Thành phần theo mùa (Seasonality)**: Biến động đều đặn tuần hoàn và lặp lại trong một khoảng thời gian cụ thể như ngày, tuần, tháng, mùa,...
+- **Thành phần theo chu kỳ (Cyclical)**: Biến động tương ứng với các chu kỳ "boom-bust" của doanh nghiệp hoặc nền kinh tế, hoặc tuân theo các chu kỳ riêng biệt.
+- **Thành phần ngẫu nhiên (Irregular/Noise)**: Biến động bất thường hoặc dư thừa, không thuộc bất kỳ phân loại nào trong ba loại trên.
 
+---
 
-## Mục tiêu hướng đến: 
-Dự đoán ra kết quả của giá cổ phiếu trong 10 ngày tiếp theo. Đưa ra đánh giá về dự đoán về giá cả của mã cổ phiếu. Trong bối cảnh thị trường biến động suy thoái toàn cầu, cuộc đua về công nghệ phần cứng. Tác động của chiến tranh của các nước trung đông với Mỹ góp phần ảnh hưởng đến thị trường chứng khoáng tài chính. Vì lẽ đó nên mục đích của bài báo cáo này nhằm đưa ra chiến lược phù hợp cho nhà đầu dự đoán xu hướng của mã cổ phiếu Intel (INTC) nhằm mục đích đưa ra phán đoán chính xác về cách nhìn từ những con số và thông tin chính trị mang lại. Điều này giúp nhà đầu tư có thể đưa ra các quyết định nên làm gì với mã cổ phiếu này.
+## 🎯 Mục tiêu:
 
-Trong đề tài này, Tôi sử dụng mã cổ phiếu của Intel (INTC). Câu hỏi trong dự án nhỏ này là các giá trị Open, High, Low, Close, Volume, Khi nào có được giá cao nhất, khi nào có giá thấp nhất, nhà đầu tư bán cổ phiếu khi nào? Nhà đầu tư muốn mua cổ phiếu khi nào? Vì sao công ty phát hành cổ phiếu bán đi một lượng lớn cổ phiếu vào một khoảng thời gian đó? Truyền thông và chính trị của đất nước đó ảnh hưởng như thế nào đến giá cổ phiếu?
+Dự đoán giá cổ phiếu trong **10 ngày tiếp theo**. Đưa ra đánh giá về xu hướng giá cổ phiếu Intel (INTC) trong bối cảnh thị trường biến động bởi suy thoái toàn cầu, cuộc đua công nghệ phần cứng, và ảnh hưởng của các yếu tố chính trị như chiến tranh Trung Đông - Mỹ. 
 
-## Thu thập dữ liệu:
-Dữ liệu được thu thập từ trang web Yahoo!Finance. Sử dụng một thư viện yfinance có sẵn trong Python, đây là một thư viện được xây dựng dựa trên việc thu thập dữ liệu từ trang web của Yahoo!Finance.
+Mục đích của báo cáo là **đề xuất chiến lược đầu tư** phù hợp cho mã cổ phiếu Intel bằng cách phân tích các yếu tố định lượng và định tính, từ đó hỗ trợ nhà đầu tư ra quyết định mua/bán cổ phiếu một cách chính xác.
 
-## Data Preprocessing & Exploratory Data Analysis
-Dữ liệu được lấy từ thư viện yfinance bằng hàm history() dùng để lấy mã lịch sử giao dịch của cổ phiếu Intel(INTC) từ ngày 1/8/1995 đến thời gian thực hiện tại.
+---
 
-Dữ liệu bao gồm 7550 dòng và 7 cột. Mỗi dòng tương ứng với dữ liệu giao dịch của 1 ngày:
-    * Open: Giá mở cửa hằng ngày.
-    * High: Giá cao nhất trong ngày.
-    * Low: Giá thấp nhất trong ngày.
-    * Close: Giá đóng cửa.
-    * Volume: Khối lượng giao dịch.
-    * Dividends: Cổ tức được chia(nếu có).
-    * Stock Splits: Thông tin chia tách cổ phiếu(nếu có).
+## Câu hỏi được đặt ra:
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Open</th>
-      <th>High</th>
-      <th>Low</th>
-      <th>Close</th>
-      <th>Volume</th>
-      <th>Dividends</th>
-      <th>Stock Splits</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1995-08-01 00:00:00-04:00</th>
-      <td>4.579953</td>
-      <td>4.579953</td>
-      <td>4.403801</td>
-      <td>4.456646</td>
-      <td>94556800</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1995-08-02 00:00:00-04:00</th>
-      <td>4.535913</td>
-      <td>4.579951</td>
-      <td>4.298107</td>
-      <td>4.333338</td>
-      <td>135620800</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1995-08-03 00:00:00-04:00</th>
-      <td>4.210034</td>
-      <td>4.421416</td>
-      <td>4.165996</td>
-      <td>4.377378</td>
-      <td>117961600</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1995-08-04 00:00:00-04:00</th>
-      <td>4.386187</td>
-      <td>4.439033</td>
-      <td>4.350957</td>
-      <td>4.368572</td>
-      <td>68723200</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>1995-08-07 00:00:00-04:00</th>
-      <td>4.403798</td>
-      <td>4.500682</td>
-      <td>4.386183</td>
-      <td>4.474259</td>
-      <td>51580000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2025-07-28 00:00:00-04:00</th>
-      <td>20.820000</td>
-      <td>21.290001</td>
-      <td>20.650000</td>
-      <td>20.680000</td>
-      <td>86105600</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2025-07-29 00:00:00-04:00</th>
-      <td>20.690001</td>
-      <td>20.850000</td>
-      <td>20.340000</td>
-      <td>20.410000</td>
-      <td>100831500</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2025-07-30 00:00:00-04:00</th>
-      <td>20.430000</td>
-      <td>20.620001</td>
-      <td>20.080000</td>
-      <td>20.340000</td>
-      <td>67420300</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2025-07-31 00:00:00-04:00</th>
-      <td>20.170000</td>
-      <td>20.230000</td>
-      <td>19.660000</td>
-      <td>19.799999</td>
-      <td>90665200</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2025-08-01 00:00:00-04:00</th>
-      <td>19.500000</td>
-      <td>19.549999</td>
-      <td>18.969999</td>
-      <td>19.309999</td>
-      <td>86320300</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>7551 rows × 7 columns</p>
-</div>
+- Khi nào cổ phiếu đạt **giá cao nhất/thấp nhất**?
+- **Thời điểm nên mua hoặc bán** cổ phiếu là khi nào?
+- Tại sao công ty lại bán một lượng lớn cổ phiếu vào một thời điểm nhất định?
+- **Yếu tố truyền thông và chính trị** ảnh hưởng như thế nào đến biến động giá cổ phiếu?
 
+---
+
+## 📥 Thu thập dữ liệu:
+
+- Dữ liệu được thu thập từ [Yahoo! Finance](https://finance.yahoo.com) thông qua thư viện **`yfinance`** của Python.
+- Hàm sử dụng: `yf.Ticker("INTC").history()`
+
+---
+
+## 🧹 Data Preprocessing & Exploratory Data Analysis (EDA)
+
+Dữ liệu được lấy từ `yfinance` bằng hàm `history()` cho mã cổ phiếu Intel (INTC), từ ngày **01/08/1995** đến **01/08/2025**.
+
+- Kích thước dữ liệu: **7551 dòng × 7 cột**
+- Mỗi dòng tương ứng với **dữ liệu giao dịch của một ngày**
+
+### 🧾 Các cột dữ liệu bao gồm:
+
+- `Open`: Giá mở cửa hằng ngày
+- `High`: Giá cao nhất trong ngày
+- `Low`: Giá thấp nhất trong ngày
+- `Close`: Giá đóng cửa
+- `Volume`: Khối lượng giao dịch
+- `Dividends`: Cổ tức được chia (nếu có)
+- `Stock Splits`: Thông tin chia tách cổ phiếu (nếu có)
+
+---
+
+### 📋 Ví dụ về dữ liệu
+
+| Date                | Open      | High      | Low       | Close     | Volume     | Dividends | Stock Splits |
+|---------------------|-----------|-----------|-----------|-----------|------------|-----------|---------------|
+| 1995-08-01 00:00:00 | 4.579953  | 4.579953  | 4.403801  | 4.456646  | 94556800   | 0.0       | 0.0           |
+| 1995-08-02 00:00:00 | 4.535913  | 4.579951  | 4.298107  | 4.333338  | 135620800  | 0.0       | 0.0           |
+| 1995-08-03 00:00:00 | 4.210034  | 4.421416  | 4.165996  | 4.377378  | 117961600  | 0.0       | 0.0           |
+| ...                 | ...       | ...       | ...       | ...       | ...        | ...       | ...           |
+| 2025-07-31 00:00:00 | 20.170000 | 20.230000 | 19.660000 | 19.799999 | 90665200   | 0.0       | 0.0           |
+| 2025-08-01 00:00:00 | 19.500000 | 19.549999 | 18.969999 | 19.309999 | 86320300   | 0.0       | 0.0           |
+
+---
+
+> ✅ Tiền xử lý và phân tích dữ liệu sẽ giúp phát hiện xu hướng, mùa vụ, hoặc biến động bất thường của giá cổ phiếu, từ đó hỗ trợ xây dựng mô hình dự báo chính xác hơn.
 
