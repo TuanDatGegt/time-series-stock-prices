@@ -2,10 +2,10 @@ Dự đoán chuỗi thời gian này là một chỗi các điểm dữ liệu t
 
 Dữ liệu chuỗi thời gian bao gồm bốn thành phần:
 
-Thành phần xu hướng: Đây là biến động tăng hoặc giảm theo một mô hình có thể dự đoán được trong một khoảng thời gian dài.
-Thành phần theo mùa: Là biến động đều đặn tuần hoàn và lặp lại trong một khoảng thời gian cụ thể như ngày, tuần, tháng, mùa,...
-Thành phần theo chu kỳ: Là biến động tương ứng với các chu kỳ "boom-bust" của doanh nghiệp hoặc nền kinh tế, hoặc tuân theo các chu kỳ riêng biệt của chúng.
-Thành phần ngẫu nhiên: Là biến động bất thường hoặc dư thừa và không thuộc bất kỳ phân loại nào trong ba phân loại trên.
+- Thành phần xu hướng: Đây là biến động tăng hoặc giảm theo một mô hình có thể dự đoán được trong một khoảng thời gian dài.
+- Thành phần theo mùa: Là biến động đều đặn tuần hoàn và lặp lại trong một khoảng thời gian cụ thể như ngày, tuần, tháng, mùa,...
+- Thành phần theo chu kỳ: Là biến động tương ứng với các chu kỳ "boom-bust" của doanh nghiệp hoặc nền kinh tế, hoặc tuân theo các chu kỳ riêng biệt của chúng.
+- Thành phần ngẫu nhiên: Là biến động bất thường hoặc dư thừa và không thuộc bất kỳ phân loại nào trong ba phân loại trên.
 
 
 Mục tiêu hướng đến: Dự đoán ra kết quả của giá cổ phiếu trong 10 ngày tiếp theo. Đưa ra đánh giá về dự đoán
