@@ -69,6 +69,55 @@ Dữ liệu được lấy từ `yfinance` bằng hàm `history()` cho mã cổ 
 
 ---
 
-> ✅ Tiền xử lý và phân tích dữ liệu sẽ giúp phát hiện xu hướng, mùa vụ, hoặc biến động bất thường của giá cổ phiếu, từ đó hỗ trợ xây dựng mô hình dự báo chính xác hơn.
+### Thống kê mã cổ phiếu INTC
 
+|                | count       | mean         | std          | min         | 25%         | 50%         | 75%         | max         |
+|----------------|-------------|--------------|--------------|-------------|-------------|-------------|-------------|-------------|
+| **Close**      | 7551.000000 | 22.418300    | 12.848665    | 3.525117    | 13.046332   | 17.585255   | 29.358292   | 62.083336   |
+| **Open**       | 7551.000000 | 22.419083    | 12.845417    | 3.577995    | 13.068528   | 17.583751   | 29.372653   | 62.028760   |
+| **High**       | 7551.000000 | 22.720441    | 12.998605    | 3.639684    | 13.217902   | 17.801679   | 29.638943   | 62.292520   |
+| **Low**        | 7551.000000 | 22.119990    | 12.696241    | 3.511898    | 12.916718   | 17.365325   | 29.101334   | 60.600826   |
+| **Volume**     | 7551.000000 | 51977040.68  | 30777120.66  | 1155400.00  | 30426050.00 | 47224400.00 | 65218550.00 | 546630400.0 |
+| **Dividends**  | 7551.000000 | 0.002358     | 0.023918     | 0.000000    | 0.000000    | 0.000000    | 0.000000    | 0.365000    |
+| **Stock Splits** | 7551.000000 | 0.000795     | 0.039859     | 0.000000    | 0.000000    | 0.000000    | 0.000000    | 2.000000    |
+
+
+----
+## Data Visualize
+
+![Kiểm tra giá trị khuyết thiếu](Chart/CountMissingValue.png)
+*Hình 1: Biểu đồ kiểm tra các cột có giá trị khuyết thiếu*
+
+---
+
+![Phân tích tương quan của các giá trị có trong mã cổ phiếu](Chart/AnalysisCorrelations.png)
+*Hình 2: Biểu đồ đánh giá sự tương quan giữa các thuộc tính*
+
+- Tính tương quan giữa các biến giá cổ phiếu (Close, Open, High, Low):
+    * Các mối quan hệ tương quan giữa 4 giá trị cổ phiếu này có giá trị bằng 1. Thể hiện một mối tương quan hoàn hảo và tích cực giữa chúng.
+    * Các giá cổ phiếu có xu hướng hoạt động cùng chiều một cách chặt chẽ. Điều này được xác định một cách chính xác vì các mức giá này đều được mở bán trong cùng một thời gian giao dịch.
+- Tính tương quan giữa các biến (Close, Open, High, Low) với các biến (Volume, Dividends, Stock Splits):
+    * Với Volume: Các giá trị tương quan đều là -0.47~-0.46. Đây là tính tương quan tiêu cực và yếu. Điều này cho thấy có mối liên hệ yếu, khi giá tăng, khối lượng giao dịch có xu hướng giảm một chút, và ngược lại (Mối quan hệ này không mạnh).
+    * Với Dividends: Các gia trị tương quan đều nằm ở mức 0.054. Đây là mức tương quan tích cực và rắt yếu. Mối quan hệ này không có mức ảnh hưởng nhiều đến giá cổ phiếu, cho thấy việc chi trả cổ tức không có mối liên hệ chặt chẽ với sự biến động của giá cổ phiếu.
+    * Với Stock Splits: Các giá trị tương quan đều nằm trong mức 0.041~0.042. Đây là mối quan hệ tương quan tiêu cực và cực kỳ yếu. Việc chia tách cổ phiếu gần như không có mối quan hệ tương quan tuyến tính với sự biến động giá.
+- Sự tương quan giữa các biến còn lại (Volume, Dividends, Stock Splits):
+    * Các giá trị Volume, Dividends, Stock Splits không có mối tương quan liên hệ với nhau nên các giá trị tương quan tiêu cực và cực kỳ yếu.
+    * Các ô trên đường chéo chính có giá trị tương quan mạnh mẽ vì một biến luôn tương quan mạnh mẽ với chính nó.
+
+---
+
+![Thuộc tính cổ phiếu từ năm 1995 đến năm 2025](Chart/IntelStockAttributes95to25.png)
+*Hình 3: Bảng các thuộc tính của cổ phiếu từ năm 1995 đến 2025*
+
+---
+
+![Xu hướng thành phần giá theo tuần](/Chart/AttributesWeeklyFrequency.png)
+*Hình 4: Bảng xu hướng thành phần theo tuần của mã cổ phiếu(INTC)*
+
+---
+![Xu hướng thành phần theo tháng](Chart/AttributesMonthlyFrequency.png)
+*Hình 4: Bảng xu hướng thành phần theo tháng của mã cổ phiếu(INTC)*
+
+![Biểu đồ nến mã cổ phiếu từ năm 1995 đến 2025](Chart/CandlestickChartINTC.png)
+*Hình 5: Biểu đồ nến mã cổ phiếu từ năm 1995 đến 2025*
 
