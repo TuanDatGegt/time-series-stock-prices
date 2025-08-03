@@ -71,3 +71,4 @@ Dữ liệu được lấy từ `yfinance` bằng hàm `history()` cho mã cổ 
 
 > ✅ Tiền xử lý và phân tích dữ liệu sẽ giúp phát hiện xu hướng, mùa vụ, hoặc biến động bất thường của giá cổ phiếu, từ đó hỗ trợ xây dựng mô hình dự báo chính xác hơn.
 
+
