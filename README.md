@@ -31,20 +31,6 @@ Dữ liệu bao gồm 7550 dòng và 7 cột. Mỗi dòng tương ứng với d�
     * Dividends: Cổ tức được chia(nếu có).
     * Stock Splits: Thông tin chia tách cổ phiếu(nếu có).
 
-    <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
