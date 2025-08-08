@@ -121,3 +121,4 @@ Dữ liệu được lấy từ `yfinance` bằng hàm `history()` cho mã cổ 
 ![Biểu đồ nến mã cổ phiếu từ năm 1995 đến 2025](Chart/CandlestickChartINTC.png)
 *Hình 5: Biểu đồ nến mã cổ phiếu từ năm 1995 đến 2025*
 
+---
