@@ -150,3 +150,33 @@ Giai đoạn từ **cuối năm 2021** đến nay (**2024**), giá liên tục n
 *Biểu đồ mô hình dự đoán giá trên tập kiểm tra của mô hình LSTM*
 
 ---
+![Biểu đồ đánh giá hiệu xuất mô mình LSTM](Chart/LossCurve.png)
+
+---
+**Thống kê tham số của mô hình:**
+Dưới đây là số lượng các lớp được sử dụng trong mô hình LSTM và số lượng tham số có trong mô hình.
+# Model Summary
+
+| Layer (type)             | Output Shape       | Param #  |
+|--------------------------|--------------------|----------|
+| Input (InputLayer)       | (None, 10, 5)      | 0        |
+| BiLSTM_1 (Bidirectional) | (None, 10, 128)    | 35,840   |
+| Dropout_1 (Dropout)      | (None, 10, 128)    | 0        |
+| LSTM_2 (LSTM)            | (None, 32)         | 20,608   |
+| BatchNorm (BatchNormalization) | (None, 32)  | 128      |
+| Dropout_2 (Dropout)      | (None, 32)         | 0        |
+| Dense_1 (Dense)          | (None, 64)         | 2,112    |
+| Dense_2 (Dense)          | (None, 8)          | 520      |
+| output (Dense)           | (None, 1)          | 9        |
+
+---
+
+**Total params:** 177,525 (693.46 KB)  
+**Trainable params:** 59,153 (231.07 KB)  
+**Non-trainable params:** 64 (256.00 B)  
+**Optimizer params:** 118,308 (462.14 KB)
+
+---
+![Biểu đồ nến dự đoán giá của 10 ngày tiếp theo](Chart/TensorflowPredictedNext10Days.png)
+
+---
