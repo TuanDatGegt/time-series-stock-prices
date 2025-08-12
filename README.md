@@ -122,3 +122,31 @@ Dữ liệu được lấy từ `yfinance` bằng hàm `history()` cho mã cổ 
 *Hình 5: Biểu đồ nến mã cổ phiếu từ năm 1995 đến 2025*
 
 ---
+![Biểu đồ SMA](Chart/SMA.png)
+*Hình 6: Biểu đồ Simple Moving Averages (SMA)*
+
+Trong chứng khoán, đường SMA (Simple Moving Average) là một chỉ báo kỹ thuật quan trọng, được tính bằng trung bình cộng giá đóng cửa của một số phiên giao dịch nhất định. Trên biểu đồ cổ phiếu INTC này, chúng ta sử dụng ba đường SMA phổ biến: 10 ngày (ngắn hạn), 20 ngày (trung hạn) và 50 ngày (dài hạn).
+
+Quan sát biểu đồ, có thể thấy các đường SMA, đặc biệt là đường SMA 10 và SMA 20, di chuyển rất sát theo đường giá đóng cửa (màu xanh lam). Điều này là hợp lý vì chúng là giá trị trung bình của giá, giúp làm mượt các biến động hàng ngày và cho thấy xu hướng chính của cổ phiếu. Đường SMA chu kỳ càng ngắn (10 ngày) thì càng bám sát giá, trong khi đường SMA chu kỳ càng dài (50 ngày) thì di chuyển mượt hơn và có độ trễ lớn hơn so với giá.
+
+# Xác Định Xu Hướng (Trend Identification)
+
+## Xu Hướng Tăng (Uptrend)
+Khi **đường giá** nằm trên các **đường SMA** và các đường SMA dốc lên, đó là tín hiệu của một xu hướng tăng giá mạnh.
+
+**Ví dụ trên biểu đồ:**  
+Giai đoạn từ **năm 2016 đến 2020**, giá cổ phiếu **INTC** liên tục nằm trên các đường **SMA 10, SMA 20** và **SMA 50**, cho thấy một chu kỳ tăng trưởng bền vững.
+
+---
+
+## Xu Hướng Giảm (Downtrend)
+Ngược lại, khi **đường giá** nằm dưới các **đường SMA** và các đường này dốc xuống, cổ phiếu đang trong xu hướng giảm giá.
+
+**Ví dụ trên biểu đồ:**  
+Giai đoạn từ **cuối năm 2021** đến nay (**2024**), giá liên tục nằm dưới các đường **SMA**, và các đường này đều hướng xuống, xác nhận một xu hướng giảm giá rõ ràng.
+
+---
+![Biểu đồ so sánh dự đoán giá so với giá thực tế](Chart/TensorflowPredictedPrices.png)
+*Biểu đồ mô hình dự đoán giá trên tập kiểm tra của mô hình LSTM*
+
+---
