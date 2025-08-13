@@ -129,9 +129,11 @@ Trong chứng khoán, đường SMA (Simple Moving Average) là một chỉ báo
 
 Quan sát biểu đồ, có thể thấy các đường SMA, đặc biệt là đường SMA 10 và SMA 20, di chuyển rất sát theo đường giá đóng cửa (màu xanh lam). Điều này là hợp lý vì chúng là giá trị trung bình của giá, giúp làm mượt các biến động hàng ngày và cho thấy xu hướng chính của cổ phiếu. Đường SMA chu kỳ càng ngắn (10 ngày) thì càng bám sát giá, trong khi đường SMA chu kỳ càng dài (50 ngày) thì di chuyển mượt hơn và có độ trễ lớn hơn so với giá.
 
-# Xác Định Xu Hướng (Trend Identification)
+# Mô Hình LSTM trong thư viện tensorflow
 
-## Xu Hướng Tăng (Uptrend)
+## Xác Định Xu Hướng (Trend Identification)
+
+### Xu Hướng Tăng (Uptrend)
 Khi **đường giá** nằm trên các **đường SMA** và các đường SMA dốc lên, đó là tín hiệu của một xu hướng tăng giá mạnh.
 
 **Ví dụ trên biểu đồ:**  
@@ -139,7 +141,7 @@ Giai đoạn từ **năm 2016 đến 2020**, giá cổ phiếu **INTC** liên t�
 
 ---
 
-## Xu Hướng Giảm (Downtrend)
+### Xu Hướng Giảm (Downtrend)
 Ngược lại, khi **đường giá** nằm dưới các **đường SMA** và các đường này dốc xuống, cổ phiếu đang trong xu hướng giảm giá.
 
 **Ví dụ trên biểu đồ:**  
@@ -177,6 +179,37 @@ Dưới đây là số lượng các lớp được sử dụng trong mô hình 
 **Optimizer params:** 118,308 (462.14 KB)
 
 ---
+![Kiến trúc mô hình LSTM của tensorflow](Chart/model_architecture.png)
+*Thứ tự các lớp trong mô hình huấn luyện dữ liệu*
+
+---
 ![Biểu đồ nến dự đoán giá của 10 ngày tiếp theo](Chart/TensorflowPredictedNext10Days.png)
 
 ---
+# Mô hình LSTM trong pytorch
+![Kiến trúc mô hình LSTM của pytorch](model_lstm.png)
+*Các lớp kiến trúc của mô hình LSTM trong pytorch*
+
+---
+![Đường dự đoán dữ liệu so với tập test](Chart/PredictedSMA.png)
+*Các đường trung bình động dự đoán trong mô hình LSTM*
+
+---
+| Date                          | Open       | High       | Low        | Close     |
+|--------------------------------|------------|------------|------------|-----------|
+| 2025-08-09 00:00:00-04:00      | 22.798178  | 22.926321  | 22.284174  | 22.780577 |
+| 2025-08-10 00:00:00-04:00      | 25.981989  | 26.121090  | 25.394033  | 25.970390 |
+| 2025-08-11 00:00:00-04:00      | 30.439528  | 30.594013  | 29.747911  | 30.436256 |
+| 2025-08-12 00:00:00-04:00      | 35.534439  | 35.706524  | 34.724270  | 35.540638 |
+| 2025-08-13 00:00:00-04:00      | 40.433231  | 40.622246  | 39.509010  | 40.448498 |
+| 2025-08-14 00:00:00-04:00      | 44.415901  | 44.618675  | 43.398895  | 44.438503 |
+| 2025-08-15 00:00:00-04:00      | 47.163704  | 47.375965  | 46.082630  | 47.191341 |
+| 2025-08-16 00:00:00-04:00      | 48.775654  | 48.993477  | 47.656956  | 48.806217 |
+| 2025-08-17 00:00:00-04:00      | 49.568550  | 49.789116  | 48.431324  | 49.600536 |
+| 2025-08-18 00:00:00-04:00      | 49.872292  | 50.093903  | 48.727943  | 49.904816 |
+
+*Dự đoán giá trong 10 ngày tới của mô hình LSTM*
+
+---
+
+![Dự đoán giá trong 10 ngày tiếp theo của mô hình LSTM trong pytorch](Chart/PytorchPredictedNext10Day.png)
