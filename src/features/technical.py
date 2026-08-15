@@ -28,8 +28,8 @@ def compute_rsi(close: pd.Series, window: int = 14) -> pd.Series:
     avg_gain = gains.rolling(window=window, min_periods=window).mean()
     avg_loss = losses.rolling(window=window, min_periods=window).mean()
 
-    rs = avg_gain / avg_loss.replace(0, np.nan)
-    rsi = 100 - (100 / (1 + rs))
+    rs = pd.Series(np.where(avg_loss == 0, np.inf, avg_gain / avg_loss), index=close.index, dtype=float)
+    rsi = pd.Series(np.where(avg_loss == 0, 100.0, 100 - (100 / (1 + rs))), index=close.index, dtype=float)
     return rsi.rename(f"rsi_{window}")
 
 
