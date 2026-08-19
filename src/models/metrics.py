@@ -41,6 +41,27 @@ def directional_accuracy(
     return float(np.mean(true_dir == pred_dir))
 
 
+def r_squared(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """
+    Coefficient of determination (R^2). Added in Phase 15 alongside the
+    Phase 10 metrics (rmse/mae/mape/directional_accuracy) so the full
+    comparison table (MAE, RMSE, MAPE, R2, Direction Accuracy) can be
+    built from one shared metrics module -- no metric is redefined
+    per-phase.
+ 
+    R^2 = 1 - (SS_res / SS_tot)
+ 
+    Returns NaN if y_true is constant (SS_tot == 0), since R^2 is
+    undefined in that degenerate case -- guarded rather than raising,
+    consistent with how mape() already handles its own edge case.
+    """
+    ss_res = np.sum((y_true - y_pred) ** 2)
+    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+    if ss_tot == 0:
+        return float("nan")
+    return float(1 - (ss_res / ss_tot))
+
+
 def evaluate_predictions(
     prev_close: np.ndarray, y_true: np.ndarray, y_pred: np.ndarray, model_name: str
 ) -> dict:
@@ -52,5 +73,6 @@ def evaluate_predictions(
         "rmse": rmse(y_true, y_pred),
         "mae": mae(y_true, y_pred),
         "mape": mape(y_true, y_pred),
+        "r_squared": r_squared(y_true, y_pred),
         "directional_accuracy": directional_accuracy(prev_close, y_true, y_pred),
     }
