@@ -1,0 +1,14 @@
+# configs/model.yaml
+# Sample hyperparameter block for Phase 11 (LSTM) and Phase 12 (GRU).
+# If configs/model.yaml already exists in the repo, ADD this section
+# to it rather than replacing the file -- other sections (e.g. baseline
+# moving-average window) may already live there.
+
+lstm:
+  lookback: 60
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.2
+  learning_rate: 0.001
+  batch_size: 64
+  epochs: 50
