@@ -12,6 +12,8 @@ lstm:
   learning_rate: 0.001
   batch_size: 64
   epochs: 50
+  patience: 10
+  min_delta: 0.0
 
 gru:
   lookback: 60
@@ -21,6 +23,8 @@ gru:
   learning_rate: 0.001
   batch_size: 64
   epochs: 50
+  patience: 10
+  min_delta: 0.0
 
 xgboost:
   n_estimators: 200

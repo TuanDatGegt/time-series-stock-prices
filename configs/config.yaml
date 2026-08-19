@@ -26,6 +26,8 @@ training:
   split_mode: ratio
   train_ratio: 0.7
   val_ratio: 0.15
+  patience: 10
+  min_delta: 0.0
 paths:
   checkpoint_dir: models/checkpoints
   metadata_dir: models/metadata

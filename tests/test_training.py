@@ -101,7 +101,14 @@ def test_tiny_training_creates_checkpoint_and_registration(tmp_path):
         }
     )
     config["models"]["lstm"].update(
-        {"lookback": 5, "hidden_size": 4, "num_layers": 1, "epochs": 1, "batch_size": 8}
+        {
+            "lookback": 5,
+            "hidden_size": 4,
+            "num_layers": 1,
+            "epochs": 1,
+            "batch_size": 8,
+            "patience": 10,
+        }
     )
     config["device"] = "cpu"
 
@@ -117,5 +124,41 @@ def test_tiny_training_creates_checkpoint_and_registration(tmp_path):
     assert result.validation_metrics["model_name"] == "lstm"
     assert "mae" in result.test_metrics
     assert result.history[0]["epoch"] == 1.0
+    assert result.checkpoint_path.endswith("lstm_best.pt")
+    assert len(result.history) <= config["models"]["lstm"]["epochs"]
+    assert (tmp_path / "checkpoints" / "INTC" / "lstm_best.pt").exists()
     assert (tmp_path / "checkpoints" / "INTC" / "lstm.pt").exists()
     assert (tmp_path / "metadata" / "INTC" / "lstm.json").exists()
+
+
+def test_early_stopping_breaks_training_loop(monkeypatch):
+    import torch
+
+    from src.training import train as training_module
+
+    class StopAfterFirstValidation:
+        def __init__(self, patience, min_delta):
+            self.calls = 0
+
+        def step(self, val_loss, epoch):
+            self.calls += 1
+            return type("Result", (), {"improved": True, "should_stop": True})()
+
+    monkeypatch.setattr(training_module, "EarlyStopping", StopAfterFirstValidation)
+    model = torch.nn.Linear(1, 1)
+    data = np.ones((4, 1), dtype=np.float32)
+    targets = np.ones((4, 1), dtype=np.float32)
+
+    history, _, _ = training_module._train_torch(
+        model,
+        data,
+        targets,
+        data,
+        targets,
+        type("Config", (), {"learning_rate": 0.01, "batch_size": 2, "epochs": 5})(),
+        "cpu",
+        patience=0,
+        min_delta=0.0,
+    )
+
+    assert len(history) == 1

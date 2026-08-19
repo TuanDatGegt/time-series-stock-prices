@@ -16,6 +16,7 @@ from src.storage.database import create_engine
 from src.storage.repository import MarketDataRepository
 from src.training.artifacts import save_artifact
 from src.training.evaluate import evaluate_arrays, predict_torch
+from src.training.early_stopping import EarlyStopping
 from src.training.registry import register_local
 from src.utils.config import load_config
 from src.utils.logger import get_logger
@@ -86,7 +87,9 @@ def _train_torch(
 	val_y: np.ndarray,
 	config,
 	device: str,
-) -> list[dict[str, float]]:
+	patience: int,
+	min_delta: float,
+) -> tuple[list[dict[str, float]], dict[str, Any], int]:
 	import torch
 	from torch.utils.data import DataLoader, TensorDataset
 
@@ -100,6 +103,9 @@ def _train_torch(
 	val_features = torch.from_numpy(val_X).to(device=device, dtype=torch.float32)
 	val_targets = torch.from_numpy(val_y).to(device=device, dtype=torch.float32)
 	history: list[dict[str, float]] = []
+	early_stopping = EarlyStopping(patience=patience, min_delta=min_delta)
+	best_state: dict[str, torch.Tensor] | None = None
+	best_epoch = -1
 
 	for epoch in range(1, config.epochs + 1):
 		model.train()
@@ -121,7 +127,19 @@ def _train_torch(
 			"train_loss": float(np.mean(losses)),
 			"validation_loss": validation_loss,
 		})
-	return history
+		result = early_stopping.step(validation_loss, epoch)
+		if result.improved:
+			best_state = {
+				name: parameter.detach().cpu().clone()
+				for name, parameter in model.state_dict().items()
+			}
+			best_epoch = epoch
+		if result.should_stop:
+			break
+
+	if best_state is None:
+		raise RuntimeError("EarlyStopping did not produce a best model state")
+	return history, best_state, best_epoch
 
 
 def run_training(
@@ -231,7 +249,27 @@ def run_training(
 		import torch
 
 		torch.manual_seed(seed)
-		history = _train_torch(model, train_X, train_y, val_X, val_y, model_config_object, device)
+		patience = int(model_config.get("patience", training.get("patience", 10)))
+		min_delta = float(model_config.get("min_delta", training.get("min_delta", 0.0)))
+		if patience < 0 or min_delta < 0:
+			raise ValueError("early stopping patience must be >= 0 and min_delta must be >= 0")
+		history, best_state, best_epoch = _train_torch(
+			model,
+			train_X,
+			train_y,
+			val_X,
+			val_y,
+			model_config_object,
+			device,
+			patience,
+			min_delta,
+		)
+		model.load_state_dict(best_state)
+		logger.info(
+			"Early stopping selected epoch %d after %d training epochs",
+			best_epoch,
+			len(history),
+		)
 		val_pred = predict_torch(model, val_X, device)
 		test_pred = predict_torch(model, test_X, device)
 		val_true = val_y.reshape(-1)
@@ -288,11 +326,21 @@ def run_training(
 		"history": history,
 		"validation_metrics": validation_metrics,
 		"test_metrics": test_metrics,
-		"device": _resolve_device(resolved) if model_name in {"lstm", "gru"} else "cpu",
+		"device": device if model_name in {"lstm", "gru"} else "cpu",
+		"best_epoch": best_epoch if model_name in {"lstm", "gru"} else None,
 	}
 	checkpoint_root = Path(checkpoint_dir or resolved["paths"]["checkpoint_dir"])
 	suffix = ".pt" if model_name in {"lstm", "gru"} else ".pkl"
+	best_filename = f"{model_name}_best.pt" if model_name in {"lstm", "gru"} else f"{model_name}_best.pkl"
 	checkpoint_path = save_artifact(
+		checkpoint_root / symbol / best_filename,
+		model_name,
+		model,
+		artifact_metadata,
+	)
+	# Keep the Phase 13 path as a compatibility alias; both artifacts contain
+	# the restored best state, while the best-named path is canonical.
+	save_artifact(
 		checkpoint_root / symbol / f"{model_name}{suffix}",
 		model_name,
 		model,
