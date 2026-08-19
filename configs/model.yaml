@@ -12,3 +12,18 @@ lstm:
   learning_rate: 0.001
   batch_size: 64
   epochs: 50
+
+gru:
+  lookback: 60
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.2
+  learning_rate: 0.001
+  batch_size: 64
+  epochs: 50
+
+xgboost:
+  n_estimators: 200
+  max_depth: 4
+  learning_rate: 0.05
+  random_state: 42

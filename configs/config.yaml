@@ -1,0 +1,33 @@
+database_url: sqlite:///data/forecasting.db
+device: auto
+random_seed: 42
+training:
+  feature_columns:
+    - return_1d
+    - return_5d
+    - sma_5
+    - sma_20
+    - sma_50
+    - ema_12
+    - ema_26
+    - rsi_14
+    - macd
+    - macd_signal
+    - macd_hist
+    - bb_upper
+    - bb_middle
+    - bb_lower
+    - atr_14
+    - volume_change
+    - volatility
+  target_column: close
+  lookback: 60
+  horizon: 1
+  split_mode: ratio
+  train_ratio: 0.7
+  val_ratio: 0.15
+paths:
+  checkpoint_dir: models/checkpoints
+  metadata_dir: models/metadata
+logging:
+  level: INFO
