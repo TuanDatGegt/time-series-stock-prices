@@ -1,8 +1,7 @@
 import pandas as pd
 
 from src.storage.database import create_engine, init_db
-from src.storage.repository import MarketDataRepository
-
+from src.storage.models import MarketDataRepository
 
 SAMPLE_DATA = pd.DataFrame(
     [
