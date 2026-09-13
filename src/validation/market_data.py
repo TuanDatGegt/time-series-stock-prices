@@ -1,7 +1,7 @@
+## src/validation/market_data.py
+
 from __future__ import annotations
-
 from typing import List, Tuple
-
 import pandas as pd
 
 REQUIRED_COLUMNS = ["symbol", "timestamp", "open", "high", "low", "close", "volume"]
@@ -14,17 +14,25 @@ class MarketDataValidator:
         if df is None or df.empty:
             raise ValueError("Market data cannot be empty.")
 
-        missing_columns = [column for column in REQUIRED_COLUMNS if column not in df.columns]
+        missing_columns = [
+            column for column in REQUIRED_COLUMNS if column not in df.columns
+        ]
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
 
         normalized = df.copy()
-        normalized["timestamp"] = pd.to_datetime(normalized["timestamp"], errors="coerce")
-        normalized = normalized.sort_values(["symbol", "timestamp"]).reset_index(drop=True)
+        normalized["timestamp"] = pd.to_datetime(
+            normalized["timestamp"], errors="coerce"
+        )
+        normalized = normalized.sort_values(["symbol", "timestamp"]).reset_index(
+            drop=True
+        )
 
         normalized["issues"] = ""
 
-        duplicate_keys = normalized.duplicated(subset=["symbol", "timestamp"], keep="first")
+        duplicate_keys = normalized.duplicated(
+            subset=["symbol", "timestamp"], keep="first"
+        )
 
         for idx, row in normalized.iterrows():
             issues: List[str] = []
@@ -55,7 +63,12 @@ class MarketDataValidator:
             if pd.isna(volume) or volume < 0:
                 issues.append("Volume must be non-negative")
 
-            if not pd.isna(open_price) and not pd.isna(high_price) and not pd.isna(low_price) and not pd.isna(close_price):
+            if (
+                not pd.isna(open_price)
+                and not pd.isna(high_price)
+                and not pd.isna(low_price)
+                and not pd.isna(close_price)
+            ):
                 if not (
                     high_price >= open_price
                     and high_price >= close_price
@@ -106,6 +119,8 @@ class MarketDataValidator:
 
             suspicious = deltas[deltas > median_delta * 3]
             if not suspicious.empty:
-                warnings.append(f"Gap detected for {symbol}: {len(suspicious)} abnormal timestamp jumps")
+                warnings.append(
+                    f"Gap detected for {symbol}: {len(suspicious)} abnormal timestamp jumps"
+                )
 
         return warnings

@@ -1,4 +1,5 @@
-# src/ingestion/base.py**[1][4]
+## src/ingestion/base.py
+
 """
 Module: src/ingestion/base.py
 Description: Defines the abstract base class (interface) for all market data sources.

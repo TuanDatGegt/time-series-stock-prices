@@ -1,4 +1,4 @@
-# src/models/gru.py
+## src/models/gru.py
 """
 Phase 12 - GRU model.
 
@@ -45,7 +45,7 @@ class GRUConfig:
     """
 
     num_features: int  # supplied at runtime, not from model.yaml (depends
-                        # on Phase 7's feature set, same as LSTMConfig)
+    # on Phase 7's feature set, same as LSTMConfig)
     lookback: int = 60
     hidden_size: int = 64
     num_layers: int = 1
@@ -109,9 +109,9 @@ class GRUModel(nn.Module):
                 f"dimension, got {x.shape[-1]}"
             )
 
-        out, h_n = self.gru(x)          # out: (batch, lookback, hidden_size)
+        out, h_n = self.gru(x)  # out: (batch, lookback, hidden_size)
         out = self.dropout(out)
 
-        last_step = out[:, -1, :]       # (batch, hidden_size)
+        last_step = out[:, -1, :]  # (batch, hidden_size)
         prediction = self.dense(last_step)  # (batch, 1)
         return prediction

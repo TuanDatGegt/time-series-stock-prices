@@ -1,4 +1,5 @@
 # scripts/train_batch.py
+
 """
 Batch training wrapper for Phase 13.
 
@@ -60,7 +61,9 @@ def run_single_training(
     )
     duration = time.monotonic() - start
 
-    stderr_tail = result.stderr.strip().splitlines()[-1] if result.stderr.strip() else ""
+    stderr_tail = (
+        result.stderr.strip().splitlines()[-1] if result.stderr.strip() else ""
+    )
 
     return BatchResult(
         symbol=symbol,
@@ -117,10 +120,14 @@ def parse_args() -> argparse.Namespace:
         description="Train multiple symbol/model combinations by calling scripts/train.py."
     )
     parser.add_argument(
-        "--symbols", required=True, help="Comma-separated ticker symbols, e.g. INTC,AAPL,MSFT"
+        "--symbols",
+        required=True,
+        help="Comma-separated ticker symbols, e.g. INTC,AAPL,MSFT",
     )
     parser.add_argument(
-        "--models", default="lstm", help="Comma-separated model names, e.g. lstm,gru (default: lstm)"
+        "--models",
+        default="lstm",
+        help="Comma-separated model names, e.g. lstm,gru (default: lstm)",
     )
     return parser.parse_args()
 
@@ -134,8 +141,10 @@ def main() -> None:
         print("Error: --symbols must contain at least one symbol", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Training {len(symbols)} symbol(s) x {len(models)} model(s) = "
-          f"{len(symbols) * len(models)} run(s)...")
+    print(
+        f"Training {len(symbols)} symbol(s) x {len(models)} model(s) = "
+        f"{len(symbols) * len(models)} run(s)..."
+    )
 
     results = run_batch(symbols, models)
     print_summary(results)

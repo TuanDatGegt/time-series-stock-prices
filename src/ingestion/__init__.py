@@ -1,4 +1,4 @@
-# **src/ingestion/\_\_init\_\_.py**[1][7]
+## src/ingestion/__init__.py
 
 """
 Module: src/ingestion/__init__.py

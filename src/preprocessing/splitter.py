@@ -1,3 +1,4 @@
+## src/preprocessing/splitter.py
 """
 Chronological dataset splitter for time-series forecasting.
 
@@ -5,6 +6,7 @@ This module provides functions to split time-series data into train, validation,
 and test sets while preserving temporal order. NO random shuffling is performed
 to avoid data leakage (using future data to predict the past).
 """
+
 from __future__ import annotations
 
 from typing import Literal
@@ -215,7 +217,9 @@ def _split_by_date_range(
 
     # Split by date boundaries
     train = df[df[timestamp_col] <= train_end_ts].copy()
-    val = df[(df[timestamp_col] > train_end_ts) & (df[timestamp_col] <= val_end_ts)].copy()
+    val = df[
+        (df[timestamp_col] > train_end_ts) & (df[timestamp_col] <= val_end_ts)
+    ].copy()
     test = df[df[timestamp_col] > val_end_ts].copy()
 
     # Ensure no empty splits

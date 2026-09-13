@@ -1,4 +1,4 @@
-# **scripts/download\_data.py**[1][7]
+# scripts/download_data.py
 
 """
 Script: scripts/download_data.py

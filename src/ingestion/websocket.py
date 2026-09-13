@@ -1,4 +1,5 @@
-# src/ingestion/websocket.py**[1]
+## src/ingestion/websocket.py
+
 """
 Module: src/ingestion/websocket.py
 Description: WebSocket client manager for real-time market streaming data.

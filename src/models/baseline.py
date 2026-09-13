@@ -1,4 +1,4 @@
-# src/models/baseline.py
+## src/models/baseline.py
 """
 Phase 10 - Baseline models.
 
@@ -180,7 +180,9 @@ class XGBoostBaseline(TabularBaseline):
         return XGBRegressor(**self._xgb_kwargs)
 
 
-def build_all_baselines(feature_cols: list[str], ma_window: int = 5) -> list[BaselineModel]:
+def build_all_baselines(
+    feature_cols: list[str], ma_window: int = 5
+) -> list[BaselineModel]:
     """Convenience factory returning all four baselines, ready to fit."""
     return [
         NaiveBaseline(),

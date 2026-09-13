@@ -1,3 +1,4 @@
+## src/models/metrics.py
 """
 Shared evaluation metrics for Phase 10 baselines and later phases
 (Phase 15 - Evaluation will reuse these same functions so LSTM/GRU are
@@ -48,9 +49,9 @@ def r_squared(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     comparison table (MAE, RMSE, MAPE, R2, Direction Accuracy) can be
     built from one shared metrics module -- no metric is redefined
     per-phase.
- 
+
     R^2 = 1 - (SS_res / SS_tot)
- 
+
     Returns NaN if y_true is constant (SS_tot == 0), since R^2 is
     undefined in that degenerate case -- guarded rather than raising,
     consistent with how mape() already handles its own edge case.

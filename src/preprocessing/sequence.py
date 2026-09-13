@@ -1,3 +1,4 @@
+## src/preprocessing/sequence.py
 """
 Sliding-window sequence creation for time-series forecasting.
 
@@ -11,6 +12,7 @@ CRITICAL CONSTRAINTS:
 - NO shuffling or data manipulation
 - Preserves chronological order strictly
 """
+
 from __future__ import annotations
 
 from typing import Optional
@@ -124,16 +126,15 @@ def build_sequences(
         # Default: all numeric except timestamp, symbol, and OHLCV
         exclude_cols = {"timestamp", "symbol", "open", "high", "low", "close", "volume"}
         feature_cols = [
-            col for col in df.columns
+            col
+            for col in df.columns
             if col not in exclude_cols and pd.api.types.is_numeric_dtype(df[col])
         ]
 
     # Validate feature columns exist
     missing_cols = set(feature_cols) - set(df.columns)
     if missing_cols:
-        raise ValueError(
-            f"Feature columns not found in DataFrame: {missing_cols}"
-        )
+        raise ValueError(f"Feature columns not found in DataFrame: {missing_cols}")
 
     # ========================================================================
     # FEATURE EXTRACTION
@@ -143,17 +144,13 @@ def build_sequences(
     try:
         X_data = df[feature_cols].astype(np.float32).values
     except (ValueError, TypeError) as e:
-        raise ValueError(
-            f"Cannot convert feature data to float32: {e}"
-        )
+        raise ValueError(f"Cannot convert feature data to float32: {e}")
 
     # Extract target data
     try:
         y_data = df[target_col].astype(np.float32).values
     except (ValueError, TypeError) as e:
-        raise ValueError(
-            f"Cannot convert target column '{target_col}' to float32: {e}"
-        )
+        raise ValueError(f"Cannot convert target column '{target_col}' to float32: {e}")
 
     # ========================================================================
     # SEQUENCE CREATION (Sliding Window)

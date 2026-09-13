@@ -1,4 +1,4 @@
-# src/training/early_stopping.py
+## src/training/early_stopping.py
 """
 Phase 14 - Early stopping.
 
@@ -17,8 +17,8 @@ from dataclasses import dataclass
 
 @dataclass
 class EarlyStoppingResult:
-    improved: bool          # did THIS step's val_loss beat the best seen so far?
-    should_stop: bool       # has patience been exhausted?
+    improved: bool  # did THIS step's val_loss beat the best seen so far?
+    should_stop: bool  # has patience been exhausted?
     best_loss: float
     best_epoch: int
     epochs_without_improvement: int

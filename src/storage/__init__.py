@@ -1,4 +1,4 @@
-# src/storage/__init__.py
+## src/storage/__init__.py
 """
 Module: src/storage/__init__.py
 Description: Storage package initializer.

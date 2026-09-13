@@ -1,9 +1,10 @@
+## src/training/artifacts.py
+
 from __future__ import annotations
 
 import pickle
 from pathlib import Path
 from typing import Any
-
 
 ARTIFACT_VERSION = 1
 
@@ -17,7 +18,11 @@ def save_artifact(
     """Persist a versioned Phase 13 artifact and its reproducibility metadata."""
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    payload = {"artifact_version": ARTIFACT_VERSION, **metadata, "model_name": model_name}
+    payload = {
+        "artifact_version": ARTIFACT_VERSION,
+        **metadata,
+        "model_name": model_name,
+    }
     temporary = destination.with_suffix(destination.suffix + ".tmp")
     try:
         if model_name in {"lstm", "gru"}:

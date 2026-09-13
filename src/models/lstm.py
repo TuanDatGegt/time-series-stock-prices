@@ -1,4 +1,4 @@
-# src/models/lstm.py
+## src/models/lstm.py
 """
 Phase 11 - LSTM model.
 
@@ -44,7 +44,7 @@ class LSTMConfig:
     """
 
     num_features: int  # must be supplied at runtime (depends on the
-                        # feature set built in Phase 7); NOT in model.yaml
+    # feature set built in Phase 7); NOT in model.yaml
     lookback: int = 60
     hidden_size: int = 128
     num_layers: int = 2
@@ -110,14 +110,12 @@ class LSTMModel(nn.Module):
                 f"dimension, got {x.shape[-1]}"
             )
 
-        out, _ = self.lstm1(x)           # (batch, lookback, hidden_size)
+        out, _ = self.lstm1(x)  # (batch, lookback, hidden_size)
         out = self.dropout(out)
         out, (h_n, _) = self.lstm2(out)  # (batch, lookback, hidden_size)
 
         # Use only the LAST timestep's output -- this is the standard
         # many-to-one setup matching y.shape = (samples, 1) from Phase 9.
-        last_step = out[:, -1, :]        # (batch, hidden_size)
+        last_step = out[:, -1, :]  # (batch, hidden_size)
         prediction = self.dense(last_step)  # (batch, 1)
         return prediction
-
-    

@@ -1,4 +1,5 @@
-# src/ingestion/yahoo.py**[1][4]
+## src/ingestion/yahoo.py
+
 """
 Module: src/ingestion/yahoo.py
 Description: Concrete implementation of `MarketDataSource` using Yahoo Finance API.
