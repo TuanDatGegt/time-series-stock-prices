@@ -381,6 +381,57 @@ def run_training(
         model_name,
         {"checkpoint_path": str(checkpoint_path), **artifact_metadata},
     )
+
+    # --- Phase 17: MLflow Model Registry Integration ---
+    try:
+        from src.training.registry import MLflowRegistryService
+
+        mlflow_service = MLflowRegistryService(
+            tracking_uri=resolved.get("mlflow_tracking_uri", "http://localhost:5000")
+        )
+
+        # 1. Log experiment run parameters &amp; metrics [1]
+        run_id = mlflow_service.log_experiment_run(
+            symbol=symbol,
+            model_name=model_name,
+            params={
+                "lookback": lookback,
+                "horizon": horizon,
+                "feature_columns": feature_cols,
+                "device": device if model_name in {"lstm", "gru"} else "cpu",
+                **(
+                    _as_metadata(model_config_object)
+                    if is_dataclass(model_config_object)
+                    else {}
+                ),
+            },
+            metrics={
+                **test_metrics,  # MAE, RMSE, MAPE, R2, Directional Accuracy [7]
+                "best_epoch": best_epoch if model_name in {"lstm", "gru"} else 0,
+            },
+            artifacts={
+                "checkpoint": str(checkpoint_path),
+                "metadata": str(metadata_path),
+            },
+        )
+
+        # 2. Evaluate Quality Gate &amp; transition stage [3]
+        is_promoted = mlflow_service.promote_to_production(
+            symbol=symbol,
+            model_name=model_name,
+            run_id=run_id,
+            current_metrics=test_metrics,
+            metric_key="rmse",
+        )
+        logger.info(
+            "MLflow logging complete. Run ID: %s | Promoted to Prod: %s",
+            run_id,
+            is_promoted,
+        )
+
+    except Exception as exc:
+        logger.warning("MLflow logging skipped or failed: %s", exc)
+
     logger.info(
         "Training complete: symbol=%s model=%s checkpoint=%s",
         symbol,
