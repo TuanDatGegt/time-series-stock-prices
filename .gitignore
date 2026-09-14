@@ -1,10 +1,45 @@
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Local data
+data/
+
+# Generated ML artifacts
+models/checkpoints/
+models/metadata/
+
+# Runtime / temporary files
+*.log
+logs/
+temp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
 PRODUCTION_TIME_SERIES_FORECASTING_PIPELINE.md
 road_map.txt
-**/__pycache__/
-.vscode/
-.coverage
-htmlcov/
-.pytest_cache/
-data/
-.aider*
-tests/
