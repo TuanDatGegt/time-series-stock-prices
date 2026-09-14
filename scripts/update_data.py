@@ -1,4 +1,4 @@
-# **scripts/update_data.py
+## scripts/update_data.py
 
 """
 Script: scripts/update_data.py

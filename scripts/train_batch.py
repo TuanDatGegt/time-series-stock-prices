@@ -1,4 +1,4 @@
-# scripts/train_batch.py
+## scripts/train_batch.py
 
 """
 Batch training wrapper for Phase 13.
