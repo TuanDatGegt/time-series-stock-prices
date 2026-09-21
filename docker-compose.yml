@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  # 1. Cơ sở dữ liệu PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: forecasting_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-forecasting}
+      POSTGRES_USER: ${POSTGRES_USER:-forecast}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forecast_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-forecast} -d ${POSTGRES_DB:-forecasting}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. MLflow Tracking Server &amp; Model Registry
+  mlflow:
+    build: .
+    container_name: forecasting_mlflow
+    restart: always
+    command: &gt;
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////app/data/mlflow.db
+      --default-artifact-root /app/models/mlflow_artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+
+  # 3. FastAPI Serving Backend
+  api:
+    build: .
+    container_name: forecasting_api
+    restart: always
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-forecast}:${POSTGRES_PASSWORD:-forecast_pass}@postgres:5432/${POSTGRES_DB:-forecasting}
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./configs:/app/configs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mlflow:
+        condition: service_started
+
+  # 4. APScheduler Background Data Worker
+  scheduler:
+    build: .
+    container_name: forecasting_scheduler
+    restart: always
+    command: python scripts/run_scheduler.py --symbols INTC,AAPL,MSFT --interval 15
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-forecast}:${POSTGRES_PASSWORD:-forecast_pass}@postgres:5432/${POSTGRES_DB:-forecasting}
+    volumes:
+      - ./data:/app/data
+      - ./configs:/app/configs
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 5. Streamlit Interactive Dashboard
+  dashboard:
+    build: .
+    container_name: forecasting_dashboard
+    restart: always
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    environment:
+      API_BASE_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

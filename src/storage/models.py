@@ -1,5 +1,7 @@
 ## src/storage/models.py
 
+# src/storage/models.py
+
 """
 Module: src/storage/models.py
 Description: SQLAlchemy ORM Models for Database Tables.
@@ -10,7 +12,16 @@ How it works:
 """
 
 from __future__ import annotations
-from sqlalchemy import Column, Float, Integer, String, TIMESTAMP, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Float,
+    Index,
+    Integer,
+    String,
+    TIMESTAMP,
+    UniqueConstraint,
+)
+from sqlalchemy.sql import func
 from src.storage.database import Base
 
 
@@ -30,8 +41,10 @@ class MarketData(Base):
     low = Column(Float, nullable=False)
     close = Column(Float, nullable=False)
     volume = Column(Integer, nullable=False)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     __table_args__ = (
         UniqueConstraint("symbol", "timestamp", name="uq_symbol_timestamp"),
+        Index("idx_market_symbol_timestamp", symbol, timestamp.desc()),
         {"sqlite_autoincrement": True},
     )

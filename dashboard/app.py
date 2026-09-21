@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Add project root to path for feature calculations
-sys.path.insert(0, str(Path(__file__).resolve().parents[8]))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from dashboard.charts import (
     create_candlestick_chart,

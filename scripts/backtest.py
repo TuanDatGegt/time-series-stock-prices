@@ -12,7 +12,7 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.features.builder import build_features
 from src.models.baseline import NaiveBaseline
@@ -31,10 +31,14 @@ def baseline_trainer_wrapper(
     """
     model = NaiveBaseline(close_col=target_col)
     model.fit(train_df)
-    predictions = model.predict(test_df)
+    target = test_df[target_col].shift(-horizon)
+    valid_mask = target.notna().to_numpy()
+    if not valid_mask.any():
+        raise ValueError("Test fold has no target rows for the requested horizon")
 
-    y_true = test_df[target_col].to_numpy()
-    prev_close = test_df[target_col].shift(1).bfill().to_numpy()
+    predictions = model.predict(test_df).astype(float)[valid_mask]
+    y_true = target.to_numpy()[valid_mask]
+    prev_close = test_df[target_col].to_numpy()[valid_mask]
 
     return "naive", y_true, predictions, prev_close
 

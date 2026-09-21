@@ -70,13 +70,13 @@ def create_candlestick_chart(
                 col=1,
             )
 
-    if show_ema and "ema_12" in df.columns:
+    if show_ema and "ema_20" in df.columns:
         fig.add_trace(
             go.Scatter(
                 x=df["timestamp"],
-                y=df["ema_12"],
+                y=df["ema_20"],
                 mode="lines",
-                name="EMA 12",
+                name="EMA 20",
                 line=dict(color="purple", width=1.5),
             ),
             row=1,
@@ -130,7 +130,7 @@ def create_rsi_chart(df: pd.DataFrame) -> go.Figure:
         title="Relative Strength Index (RSI 14)",
         template="plotly_dark",
         height=250,
-        yaxis=dict(range=[5]),
+        yaxis=dict(range=[0, 100]),
         margin=dict(l=20, r=20, t=40, b=20),
     )
     return fig
@@ -172,6 +172,18 @@ def create_forecast_comparison_chart(df: pd.DataFrame, prediction: dict) -> go.F
             ),
             marker=dict(size=10, symbol="star"),
         )
+    )
+
+    actual_price = float(recent_df["close"].iloc[-1])
+    prediction_error = actual_price - float(pred_price)
+    fig.add_annotation(
+        x=last_time,
+        y=actual_price,
+        text=f"Prediction Error (actual - predicted): {prediction_error:+.4f}",
+        showarrow=True,
+        arrowhead=2,
+        ax=0,
+        ay=-40,
     )
 
     fig.update_layout(

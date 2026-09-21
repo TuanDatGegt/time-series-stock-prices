@@ -1,0 +1,18 @@
+# requirements.txt
+APScheduler==3.11.3
+fastapi==0.141.1
+mlflow==3.16.0
+numpy==2.4.6
+pandas==3.0.5
+plotly==7.0.0
+pydantic==2.13.5
+pytest==9.1.1
+PyYAML==6.0.3
+requests==2.34.2
+scikit-learn==1.9.0
+SQLAlchemy==2.0.52
+streamlit==1.63.0
+torch==2.13.0
+uvicorn==0.53.0
+xgboost==3.2.0
+yfinance==1.5.2

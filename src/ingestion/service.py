@@ -92,7 +92,7 @@ class IncrementalIngestionService:
             start_ts = pd.Timestamp(start)
             if start_ts == start_ts.normalize():
                 start_ts = start_ts.normalize()
-            raw_df = raw_df[raw_df["timestamp"] <= start_ts].copy()
+            raw_df = raw_df[raw_df["timestamp"] >= start_ts].copy()
             print(f"[debug] raw_df after filtering by start:\n{raw_df}")
 
         # Filter dataset by explicit end parameter if provided

@@ -12,10 +12,10 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import market, prediction
+from api.routes import market, model, prediction
 from api.schemas import HealthCheckResponse, ReadinessCheckResponse
 from src.inference.service import InferenceService
-from src.storage.database import create_engine
+from src.storage.database import create_engine, init_db
 from src.storage.repository import MarketDataRepository
 from src.utils.config import load_config
 
@@ -40,6 +40,7 @@ async def lifespan(app: FastAPI):
     config = load_config()
     db_url = config.get("database_url", "sqlite:///data/forecasting.db")
     engine = create_engine(db_url)
+    init_db(engine)
 
     app_state.repository = MarketDataRepository(engine)
     app_state.inference_service = InferenceService(
@@ -74,6 +75,7 @@ app.add_middleware(
 # Register Sub-Routers
 app.include_router(prediction.router)
 app.include_router(market.router)
+app.include_router(model.router)
 
 
 @app.get("/health", response_model=HealthCheckResponse, tags=["Health"])

@@ -92,6 +92,25 @@ class Predictor:
         else:
             raise ValueError(f"Unsupported inference model: {self.model_name}")
 
+    @staticmethod
+    def _convert_torch_output(output: torch.Tensor) -> float | list[float]:
+        values = output.detach().cpu()
+        if values.ndim == 2 and values.shape[1] == 1:
+            values = values[:, 0]
+        elif values.ndim != 1:
+            raise ValueError(
+                "Recurrent model output must have shape (batch, 1) or (batch,)"
+            )
+
+        predictions = values.numpy().tolist()
+        if not predictions:
+            raise ValueError("Recurrent model returned an empty prediction")
+        if not np.isfinite(predictions).all():
+            raise ValueError("Recurrent model returned a non-finite prediction")
+        if len(predictions) == 1:
+            return float(predictions[0])
+        return [float(prediction) for prediction in predictions]
+
     def predict_next(self, raw_history_df: pd.DataFrame) -> Dict[str, Any]:
         """
         Execute price prediction using raw market history DataFrame.
@@ -132,7 +151,13 @@ class Predictor:
             ).unsqueeze(0)
 
             with torch.no_grad():
-                pred_scaled = float(self.model(input_tensor).numpy().reshape(-1))
+                pred_scaled = self._convert_torch_output(self.model(input_tensor))
+
+            if isinstance(pred_scaled, list):
+                raise ValueError(
+                    "Predictor expects one input sequence, but the model returned "
+                    f"{len(pred_scaled)} predictions"
+                )
 
             # Note: Prediction outputs the target price directly or scaled value
             predicted_price = pred_scaled

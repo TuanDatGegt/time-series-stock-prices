@@ -1,7 +1,9 @@
+# tests/test_storage.py
+
 import pandas as pd
 
 from src.storage.database import create_engine, init_db
-from src.storage.models import MarketDataRepository
+from src.storage.repository import MarketDataRepository
 
 SAMPLE_DATA = pd.DataFrame(
     [

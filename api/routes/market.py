@@ -55,3 +55,27 @@ def get_market_history(
     ]
 
     return MarketHistoryResponse(symbol=symbol.upper(), count=len(bars), bars=bars)
+
+
+@router.get("/{symbol}", response_model=MarketBarSchema)
+def get_latest_market_data(
+    symbol: str,
+    repository: MarketDataRepository = Depends(get_repository),
+):
+    """Fetch the latest stored market bar for a symbol."""
+    df = repository.fetch_history(symbol=symbol.upper())
+    if df.empty:
+        raise HTTPException(
+            status_code=404, detail=f"No market data found for symbol {symbol}"
+        )
+
+    row = df.iloc[-1]
+    return MarketBarSchema(
+        symbol=row["symbol"],
+        timestamp=str(row["timestamp"]),
+        open=float(row["open"]),
+        high=float(row["high"]),
+        low=float(row["low"]),
+        close=float(row["close"]),
+        volume=int(row["volume"]),
+    )
