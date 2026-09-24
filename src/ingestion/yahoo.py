@@ -33,10 +33,11 @@ class YahooFinanceSource(MarketDataSource):
             raise ValueError("symbol must not be empty")
 
         try:
+            provider_end = pd.Timestamp(end).strftime("%Y-%m-%d")
             data = yf.download(
                 tickers=symbol,
                 start=start,
-                end=end,
+                end=provider_end,
                 interval=interval,
                 auto_adjust=False,
                 progress=False,

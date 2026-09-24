@@ -73,7 +73,9 @@ class IncrementalIngestionService:
         raw_df = self._fetch_provider_data(symbol, fetch_start, fetch_end, interval)
         raw_df = self._ensure_symbol_column(raw_df, symbol)
         if "timestamp" in raw_df.columns:
-            raw_df["timestamp"] = pd.to_datetime(raw_df["timestamp"], errors="coerce")
+            raw_df["timestamp"] = pd.to_datetime(
+                raw_df["timestamp"], errors="coerce", utc=True
+            )
         print(f"[debug] raw_df rows before validation:\n{raw_df}")
 
         # Return early if no records were returned by the provider
@@ -90,18 +92,18 @@ class IncrementalIngestionService:
         # Filter dataset by explicit start parameter if provided
         if start is not None:
             start_ts = pd.Timestamp(start)
-            if start_ts == start_ts.normalize():
-                start_ts = start_ts.normalize()
+            if start_ts.tzinfo is None:
+                start_ts = start_ts.tz_localize("UTC")
             raw_df = raw_df[raw_df["timestamp"] >= start_ts].copy()
-            print(f"[debug] raw_df after filtering by start:\n{raw_df}")
 
         # Filter dataset by explicit end parameter if provided
         if end is not None:
             end_ts = pd.Timestamp(end)
+            if end_ts.tzinfo is None:
+                end_ts = end_ts.tz_localize("UTC")
             if end_ts == end_ts.normalize():
                 end_ts = end_ts + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
             raw_df = raw_df[raw_df["timestamp"] <= end_ts].copy()
-            print(f"[debug] raw_df after filtering by end:\n{raw_df}")
 
         if raw_df.empty:
             return {
@@ -115,8 +117,10 @@ class IncrementalIngestionService:
 
         # Exclude records already existing in the database (timestamp &lt;= last_timestamp)
         if last_timestamp is not None:
-            raw_df = raw_df[raw_df["timestamp"] > pd.Timestamp(last_timestamp)].copy()
-            print(f"[debug] raw_df after filtering by last_timestamp:\n{raw_df}")
+            last_ts = pd.Timestamp(last_timestamp)
+            if last_ts.tzinfo is None:
+                last_ts = last_ts.tz_localize("UTC")
+            raw_df = raw_df[raw_df["timestamp"] > last_ts].copy()
 
         if raw_df.empty:
             return {
@@ -190,14 +194,11 @@ class IncrementalIngestionService:
     @staticmethod
     def _normalize_start_bound(value: Optional[str]) -> Optional[str]:
         """
-        Format start boundary timestamp string (YYYY-MM-DD HH:MM:SS).
+        Format start boundary timestamp string to YYYY-MM-DD for yfinance compatibility.
         """
         if value is None:
             return None
-        ts = pd.Timestamp(value)
-        if ts == ts.normalize():
-            return ts.strftime("%Y-%m-%d 00:00:00")
-        return ts.strftime("%Y-%m-%d %H:%M:%S")
+        return pd.Timestamp(value).strftime("%Y-%m-%d")
 
     @staticmethod
     def _normalize_end_bound(value: Optional[str]) -> Optional[str]:
@@ -206,12 +207,10 @@ class IncrementalIngestionService:
         """
         if value is None:
             return None
-        ts = pd.Timestamp(value)
-        if ts == ts.normalize():
-            return (ts + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-        return ts.strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = pd.Timestamp(value)
+        if timestamp == timestamp.normalize():
+            timestamp = timestamp + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
+        return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def _format_start(last_timestamp: Optional[datetime]) -> Optional[str]:

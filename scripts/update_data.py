@@ -52,15 +52,23 @@ class UpdateDataPipeline:
         self.prediction_sink = prediction_sink
         self.logger = logger or get_logger("update_data")
 
-    def run_symbol(self, symbol: str) -> dict[str, Any]:
+    def run_symbol(
+        self,
+        symbol: str,
+        start: str | None = None,
+        end: str | None = None,
+    ) -> dict[str, Any]:
         """Run all pipeline stages for one symbol and return stage results."""
         normalized_symbol = symbol.upper().strip()
         result: dict[str, Any] = {"symbol": normalized_symbol, "errors": {}}
 
         try:
-            result["ingest"] = self.ingestion_service.sync_symbol(
-                symbol=normalized_symbol
-            )
+            ingest_kwargs = {"symbol": normalized_symbol}
+            if start is not None:
+                ingest_kwargs["start"] = start
+            if end is not None:
+                ingest_kwargs["end"] = end
+            result["ingest"] = self.ingestion_service.sync_symbol(**ingest_kwargs)
         except Exception as exc:
             return self._stage_error(result, "ingest", exc)
 
@@ -151,14 +159,18 @@ def build_pipeline(config: dict[str, Any]) -> UpdateDataPipeline:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run market data update pipeline")
     parser.add_argument("--symbols", default="INTC,AAPL,MSFT")
+    parser.add_argument("--start", default=None, help="Start date bound (YYYY-MM-DD)")
+    parser.add_argument("--end", default=None, help="End date bound (YYYY-MM-DD)")
     parser.add_argument("--config-dir", default="configs")
     args = parser.parse_args(argv)
+
     logger = get_logger("update_data")
     pipeline = build_pipeline(load_config(Path(args.config_dir)))
+
     for symbol in (value.strip() for value in args.symbols.split(",")):
         if not symbol:
             continue
-        result = pipeline.run_symbol(symbol)
+        result = pipeline.run_symbol(symbol, start=args.start, end=args.end)
         if result["errors"]:
             logger.error("Update failed for %s: %s", symbol, result["errors"])
         else:
